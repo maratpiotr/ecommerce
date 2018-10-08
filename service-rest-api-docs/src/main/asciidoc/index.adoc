@@ -1,0 +1,171 @@
+:toc: left
+= AppsFactory Core Rest API v1.0
+
+== Overview
+
+=== Http Verbs
+
+[cols="h,5a"]
+|===
+| GET
+| Used for retrieving resources
+
+| POST
+| Used for creating resources
+
+| PUT
+| Used for replacing resources or collections
+
+| PATCH
+| Used for updating resources with partial JSON data
+
+| DELETE
+| Used for deleting resources
+|===
+
+=== Http Client Errors
+
+[cols="h,5a"]
+|===
+| 400
+| Bad Request - Incorrect request syntax
+
+| 404
+| Not Found - Requested entity was not found
+
+| 409
+| Conflict - Requested entity breaks unique constraint
+
+| 422
+| Unprocessable Entity - Request matched and met syntactic contract but validation failed
+
+| 500
+| Internal Server Error
+
+|===
+
+//=== Authentication
+//=== Pagination
+
+== Customers products
+==== Get all products
+----
+GET /product
+----
+==== Chose products
+----
+POST /customer/:customerId/product
+----
+===== _Request_
+----
+[
+   {
+      "productCode":"CD-CI",
+      "parameters":[
+         {
+            "code":"SIZE",
+            "value":"L"
+         }
+      ]
+   },
+   {
+      "productCode":"SERVICES",
+      "parameters":[
+         {
+            "code":"NAME",
+            "value":"STANDARD"
+         },
+         {
+            "code":"SIZE",
+            "value":"M"
+         }
+      ]
+   },
+    {
+         "productCode":"ENVIRONMENTS",
+         "parameters":[
+            {
+               "code":"NAME",
+               "value":"DEV"
+            },
+            {
+               "code":"SIZE",
+               "value":"M"
+            }
+         ]
+      }
+]
+----
+===== _Product Codes and Parametes_
+* CD-CI
+    ** Parameters:
+        *** SIZE [S|M|L|XL]
+
+* SERVICES
+    ** Parameters:
+        *** NAME: [BASIC|STANDARD|PREMIUM]
+        *** SIZE [S|M|L|XL]
+* ENVIRONMENTS
+    ** Parameters:
+        *** NAME: Custom name
+            *** SIZE [S|M|L|XL]
+            *** QUANTITY: [1-8]
+
+== Customer Environments
+
+=== Environments
+
+==== Spin up new customer's environment
+----
+POST /customer/:customerId/environment/:templateId
+----
+
+===== _Response_
+----
+{
+  "environmentId": "7c9053e7b8e18"
+}
+----
+
+===== _Response Error Codes_
+* CUSTOMER-NOT-FOUND
+* TEMPLATE-NOT-FOUND
+* ENVIRONMENT-ALREADY-CREATED
+* CUSTOMER-BLOCKED
+
+==== Get customer's environment
+----
+GET /customer/:customerId/environment
+----
+
+===== _Response_
+----
+{
+    "environmentId": "7c9053e7b8e18"
+    "templateId": "2db313fabca5",
+    "url" : "http://customer.autodrone.io"
+}
+----
+
+==== Suspend customer's environment
+----
+POST /customer/:customerId/environment/:environmentId/suspend
+----
+
+===== _Response Error Codes_
+* CUSTOMER-NOT-FOUND
+* ENVIRONMENT-NOT-FOUND
+* ENVIRONMENT-ALREADY-SUSPENDED
+* CUSTOMER-BLOCKED
+
+==== Resume customer's environment
+----
+POST /customer/:customerId/environment/:environmentId/resume
+----
+
+===== _Response Error Codes_
+* CUSTOMER-NOT-FOUND
+* ENVIRONMENT-NOT-FOUND
+* ENVIRONMENT-NOT-SUSPENDED
+* CUSTOMER-BLOCKED
+
